@@ -27,6 +27,7 @@ INSTALL_SCOPE="system"
 DOWNLOAD_URL="https://storage.googleapis.com/antigravity-public/antigravity-hub/2.0.0-6324554176528384/linux-x64/Antigravity.tar.gz"
 DRY_RUN=false
 TEMP_DIR=""
+LEGACY_REPOSITIONED=false
 
 # Print usage instructions
 show_help() {
@@ -187,21 +188,56 @@ escalate_cmd ln -s "$TARGET_APP_DIR/antigravity" "$TARGET_BIN_PATH"
 # Configure Desktop application launcher entry
 echo -e "${YELLOW}Generating Desktop integration entry...${NC}"
 
-# Shadowing Detection: Check if a local desktop file will hide the system-wide one
-LOCAL_SHADOW_FILE="$HOME/.local/share/applications/antigravity.desktop"
-if [[ "$INSTALL_SCOPE" == "system" && -f "$LOCAL_SHADOW_FILE" ]]; then
-    echo -e "${YELLOW}${BOLD}⚠️  Shadowing Conflict Detected!${NC}"
-    echo -e "${YELLOW}A local desktop entry at $LOCAL_SHADOW_FILE is currently shadowing the system-wide launcher.${NC}"
-    echo -e "${YELLOW}This will prevent 'Antigravity 2.0' from appearing in your application menu.${NC}"
+# -----------------------------------------------------------------------------
+# Dual-Version Launcher Integrations & Shadowing Resolution
+# -----------------------------------------------------------------------------
+echo -e "${YELLOW}Analyzing system for dual-version coexistence...${NC}"
+
+SYSTEM_DESKTOP_FILE="/usr/share/applications/antigravity.desktop"
+LOCAL_DESKTOP_FILE="$HOME/.local/share/applications/antigravity.desktop"
+
+if [[ "$INSTALL_SCOPE" == "system" ]]; then
+    # 1. System Scope: Check if local desktop file exists and shadows system scope
+    if [[ -f "$LOCAL_DESKTOP_FILE" ]]; then
+        if grep -q "/usr/share/antigravity" "$LOCAL_DESKTOP_FILE" 2>/dev/null; then
+            echo -e "${BLUE}Detected legacy v1.x launcher at user level. Renaming to preserve...${NC}"
+            mv "$LOCAL_DESKTOP_FILE" "$HOME/.local/share/applications/antigravity-legacy.desktop"
+            update-desktop-database "$HOME/.local/share/applications" || true
+            LEGACY_REPOSITIONED=true
+        fi
+    fi
     
-    # Check if it belongs to v1.x
-    if grep -q "/usr/share/antigravity" "$LOCAL_SHADOW_FILE" 2>/dev/null; then
-        echo -e "${BLUE}Detected legacy v1.x configuration. Renaming it to 'antigravity-legacy.desktop' to resolve...${NC}"
-        mv "$LOCAL_SHADOW_FILE" "$HOME/.local/share/applications/antigravity-legacy.desktop"
-        update-desktop-database "$HOME/.local/share/applications" || true
-        echo -e "${GREEN}✓ Shadowing resolved.${NC}"
-    else
-        echo -e "${RED}Warning: Please manually remove or rename $LOCAL_SHADOW_FILE to see the new version.${NC}"
+    # 2. System Scope: Check if system-wide desktop file belongs to v1.x before overwriting
+    if [[ -f "$SYSTEM_DESKTOP_FILE" ]]; then
+        if grep -q "/usr/share/antigravity" "$SYSTEM_DESKTOP_FILE" 2>/dev/null; then
+            echo -e "${BLUE}Detected system-wide legacy v1.x launcher. Renaming to preserve...${NC}"
+            escalate_cmd mv "$SYSTEM_DESKTOP_FILE" "/usr/share/applications/antigravity-legacy.desktop"
+            LEGACY_REPOSITIONED=true
+        fi
+    fi
+
+else
+    # 3. User Scope: Check if local desktop file belongs to v1.x before overwriting
+    if [[ -f "$LOCAL_DESKTOP_FILE" ]]; then
+        if grep -q "/usr/share/antigravity" "$LOCAL_DESKTOP_FILE" 2>/dev/null; then
+            echo -e "${BLUE}Detected legacy v1.x launcher at user level. Renaming to preserve...${NC}"
+            mv "$LOCAL_DESKTOP_FILE" "$HOME/.local/share/applications/antigravity-legacy.desktop"
+            LEGACY_REPOSITIONED=true
+        fi
+    fi
+    
+    # 4. User Scope: Check if system-wide desktop file belongs to v1.x and will be shadowed
+    if [[ -f "$SYSTEM_DESKTOP_FILE" ]]; then
+        if grep -q "/usr/share/antigravity" "$SYSTEM_DESKTOP_FILE" 2>/dev/null; then
+            # Copy system v1.x launcher to user applications folder as legacy to prevent it being shadowed
+            LOCAL_LEGACY_PATH="$HOME/.local/share/applications/antigravity-legacy.desktop"
+            if [[ ! -f "$LOCAL_LEGACY_PATH" ]]; then
+                echo -e "${BLUE}Detected system-wide legacy v1.x launcher. Copying to user-space to preserve...${NC}"
+                mkdir -p "$(dirname "$LOCAL_LEGACY_PATH")"
+                cp "$SYSTEM_DESKTOP_FILE" "$LOCAL_LEGACY_PATH"
+                LEGACY_REPOSITIONED=true
+            fi
+        fi
     fi
 fi
 # Clean up older, duplicate desktop launchers to prevent duplicate launcher shortcuts
@@ -256,3 +292,10 @@ echo -e "${GREEN}${BOLD}✓ Antigravity 2.0 successfully installed!${NC}"
 echo -e "You can launch the IDE via:"
 echo -e "  * Terminal command: ${BOLD}antigravity${NC}"
 echo -e "  * Application menu entry: ${BOLD}Antigravity 2.0${NC}"
+
+if [[ "$LEGACY_REPOSITIONED" == "true" ]]; then
+    echo -e "\n${YELLOW}${BOLD}⚠️  Coexistence Notice:${NC}"
+    echo -e "  A legacy Antigravity 1.x launcher has been renamed or copied to ${BOLD}antigravity-legacy.desktop${NC}."
+    echo -e "  Due to GNOME Shell's launcher grid caching, you may need to **log out and log back in**"
+    echo -e "  for both launchers to appear side-by-side in your applications drawer."
+fi
