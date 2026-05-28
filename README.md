@@ -83,6 +83,7 @@ To build the RPM packages, you need the RPM development toolchain:
 
 ```bash
 sudo dnf -y groupinstall 'RPM Development Tools'
+sudo dnf install -y rpkg
 sudo dnf builddep -y antigravity2.spec antigravity2-ide.spec
 ```
 
