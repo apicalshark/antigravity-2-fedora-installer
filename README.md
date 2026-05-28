@@ -21,6 +21,8 @@ Yes, I made this in old antigravity lol.
 * Use this software at your own risk. The maintainer is not responsible for any system instability or data loss.
 * For the official Google distribution, please visit [antigravity.google](https://antigravity.google).
 
+[Download](https://github.com/apicalshark/antigravity-2-fedora-installer/releases/latest)
+
 ---
 
 ### 1. Install Build Dependencies
