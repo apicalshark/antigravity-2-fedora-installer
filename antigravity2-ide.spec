@@ -10,7 +10,7 @@
 
 Name:           antigravity2-ide
 Version:        2.0.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Antigravity 2.0 IDE
 
 License:        MIT
@@ -68,5 +68,8 @@ install -m 644 %{SOURCE2} %{buildroot}%{_datadir}/icons/hicolor/512x512/apps/%{n
 %{_datadir}/icons/hicolor/512x512/apps/%{name}.png
 
 %changelog
+* Thu May 28 2026 ApicalShark - 2.0.3-2
+- Fix StartupWMClass to match applicationName (antigravity-ide) so taskbar icon appears correctly
+
 * Thu May 28 2026 ApicalShark - 2.0.3-1
 - Initial RPM release of Antigravity 2.0 IDE renamed to antigravity2-ide
