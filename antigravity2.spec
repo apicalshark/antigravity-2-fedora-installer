@@ -68,6 +68,14 @@ install -m 644 %{SOURCE2} %{buildroot}%{_datadir}/applications/%{name}.desktop
 mkdir -p %{buildroot}%{_datadir}/icons/hicolor/512x512/apps
 install -m 644 %{SOURCE3} %{buildroot}%{_datadir}/icons/hicolor/512x512/apps/%{name}.png
 
+%post
+/usr/bin/update-desktop-database &> /dev/null || :
+/usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
+
+%postun
+/usr/bin/update-desktop-database &> /dev/null || :
+/usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
+
 %files
 /opt/%{name}-Linux/
 %{_bindir}/%{name}

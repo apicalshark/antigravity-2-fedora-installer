@@ -94,6 +94,14 @@ Execute the build script to fetch the upstream source tarballs and build the RPM
 ./build.sh
 ```
 
+> [!NOTE]
+> **Build Duration Note:**
+> Building these packages involves downloading upstream archives and compiling files locally:
+> * **`antigravity2` (Agent):** Takes ~2 minutes.
+> * **`antigravity2-ide` (IDE):** Takes ~3 minutes.
+> 
+> *Actual build times depend on your network speed and system specifications.*
+
 The generated RPM files will be stored in `~/rpkg/`.
 
 ### 3. Install the Packages
