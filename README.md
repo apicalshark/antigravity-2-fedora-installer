@@ -181,3 +181,4 @@ chmod +x uninstall.sh
 ## License
 
 This project is open-source and available under the [MIT License](LICENSE).
+Antigravity 2.0 and its associated branding and assets are property of Google LLC. All trademarks are property of their respective owners.
