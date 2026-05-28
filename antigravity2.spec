@@ -13,7 +13,7 @@ Version:        2.0.6
 Release:        1%{?dist}
 Summary:        Antigravity 2.0 Agent
 
-License:        MIT
+License:        Proprietary (Google Terms of Service)
 URL:            https://storage.googleapis.com/antigravity-public/antigravity-hub/index.html
 ExclusiveArch:  x86_64 aarch64
 

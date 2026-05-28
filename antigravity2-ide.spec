@@ -13,7 +13,7 @@ Version:        2.0.3
 Release:        2%{?dist}
 Summary:        Antigravity 2.0 IDE
 
-License:        MIT
+License:        Proprietary (Google Terms of Service)
 URL:            https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/index.html
 ExclusiveArch:  x86_64
 

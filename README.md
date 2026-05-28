@@ -2,7 +2,7 @@
 
 This repository provides RPM spec files and a build script to package **Antigravity 2.0 Agent** and **Antigravity 2.0 IDE** as coexisting packages (`antigravity2` and `antigravity2-ide`) alongside version 1.0 for native Wayland execution on Fedora Workstation.
 
-Yes, I made this in old antigravity lol. 
+Yes, I made this in old antigravity lol.
 
 ## Features
 
@@ -13,7 +13,18 @@ Yes, I made this in old antigravity lol.
 
 ## Installation
 
+### Antigravity 2.0 RPM Distribution
+
+**DISCLAIMER:** This is an unofficial, community-maintained repository.
+
+* This package is **not** provided by Google.
+* Use this software at your own risk. The maintainer is not responsible for any system instability or data loss.
+* For the official Google distribution, please visit [antigravity.google](https://antigravity.google).
+
+---
+
 ### 1. Install Build Dependencies
+
 To build the RPM packages, you need the RPM development toolchain:
 
 ```bash
@@ -22,6 +33,7 @@ sudo dnf builddep -y antigravity2.spec antigravity2-ide.spec
 ```
 
 ### 2. Build the Packages
+
 Execute the build script to fetch the upstream source tarballs and build the RPM packages locally:
 
 ```bash
@@ -31,6 +43,7 @@ Execute the build script to fetch the upstream source tarballs and build the RPM
 The generated RPM files will be stored in `~/rpkg/`.
 
 ### 3. Install the Packages
+
 Once the build completes successfully, install the packages using `dnf`:
 
 ```bash
@@ -54,6 +67,8 @@ To remove the packages:
 
 ```bash
 sudo dnf remove antigravity2 antigravity2-ide
+
+
 ```
 
 ## License
